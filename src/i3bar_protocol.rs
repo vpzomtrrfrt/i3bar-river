@@ -1,7 +1,7 @@
 use crate::color::Color;
 use crate::pointer_btn::PointerBtn;
 use crate::text::Align;
-use crate::utils::{de_first_json, de_last_json, last_line};
+use crate::utils::{de_first_json, de_last_json, last_line, trim_ascii_start};
 use serde::{de, Deserialize, Serialize};
 use std::io::{self, Error, ErrorKind};
 
@@ -116,7 +116,7 @@ impl Protocol {
                 }
                 None => Ok(bytes),
             },
-            Self::JsonNotStarted { header } => match bytes.trim_ascii_start() {
+            Self::JsonNotStarted { header } => match trim_ascii_start(bytes) {
                 [] => Ok(&[]),
                 [b'[', rem @ ..] => {
                     *self = Self::Json {
